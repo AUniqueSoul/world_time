@@ -10,17 +10,17 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
-  String time='';
+  late String time;
   Map data = {};
 
   @override
   Widget build(BuildContext context) {
 
-    data = ModalRoute.of(context)?.settings.arguments as Map;
+    data = data.isNotEmpty ? data: ModalRoute.of(context)?.settings.arguments as Map;
 
     String bgImage = data['isDaytime'] ? 'day.png' : 'night.png';
-    Color? bgColor = data['isDaytime'] ? Colors.blue[400] : Colors.deepPurple[800];
-    Color? btnColor = data['isDaytime'] ? Colors.lightBlue[400] : Colors.deepPurple[800];
+    Color? bgColor = data['isDaytime'] ? Colors.blue[400] : Colors.indigo[800];
+    Color? btnColor = data['isDaytime'] ? Colors.lightBlue[400] : Colors.indigo[800];
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -37,17 +37,27 @@ class _HomeState extends State<Home> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/location');
+                      onPressed: () async {
+                       dynamic result  = await Navigator.pushNamed(context, '/location', arguments: {
+                         'isDaytime': data['isDaytime'],
+                       });
+                       setState(() {
+                         data = {
+                           'location': result['location'],
+                           'flag': result['flag'],
+                           'time': result['time'],
+                           'isDaytime': result['isDaytime'],
+                         };
+                       });
                       },
                       style: ButtonStyle(
                         backgroundColor: MaterialStatePropertyAll<Color>(btnColor!),
                       ),
                       icon: const Icon(
-                          Icons.edit_location_alt,
+                          Icons.edit_location_alt_rounded,
                           color: Colors.white),
                       label: Text(
-                          'Edit location',
+                          'Change location',
                           style: GoogleFonts.inter(
                             textStyle: const TextStyle(
                               color: Colors.white,
