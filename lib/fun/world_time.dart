@@ -4,7 +4,8 @@ import 'package:intl/intl.dart';
 
  class WorldTime {
 
-  String datetime="", offset="", location="", time="", flag="", url="";
+   late bool  isDaytime;
+   late String datetime, offset, location, time, flag, url;
 
   WorldTime({required this.location, required this.flag, required this.url});
 
@@ -16,9 +17,9 @@ import 'package:intl/intl.dart';
       offset = data['utc_offset'].substring(1,3);
       DateTime dt = DateTime.parse(datetime);
       dt = dt.add(Duration(hours: int.parse(offset)));
+      isDaytime = dt.hour > 6 && dt.hour < 20 ? true : false;
       time = DateFormat.jm().format(dt);
     } catch(e){
-      print(e);
       time = 'failed to update date!';
     }
   }
